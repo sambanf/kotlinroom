@@ -28,6 +28,12 @@ class TransAdapter (private val tran: ArrayList<Trans>, private val listener:OnA
         holder.view.text2.setOnClickListener {
             listener.onClick(tra)
         }
+        holder.view.icon_edit.setOnClickListener {
+            listener.onUpdate(tra)
+        }
+        holder.view.icon_delete.setOnClickListener {
+            listener.onDelete(tra)
+        }
     }
 
     class TransViewHolder(val view: View) :RecyclerView.ViewHolder(view)
@@ -39,6 +45,8 @@ class TransAdapter (private val tran: ArrayList<Trans>, private val listener:OnA
 
     interface OnAdapterListener{
         fun onClick(tran: Trans)
+        fun onUpdate(tran: Trans)
+        fun onDelete(tran: Trans)
     }
 }
 

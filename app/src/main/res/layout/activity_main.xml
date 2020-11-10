@@ -12,7 +12,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="@string/barcode"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/texttitle2"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -40,6 +40,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/tulis"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_export"
+        android:layout_margin="10dp"
+        />
+
+    <Button
+        android:id="@+id/button_export"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/export"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_deleteall"
+        android:layout_margin="10dp"
+        />
+    <Button
+        android:id="@+id/button_deleteall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Clear All Data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

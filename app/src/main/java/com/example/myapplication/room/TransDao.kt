@@ -16,4 +16,10 @@ interface TransDao {
 
     @Query(value =  "SELECT * FROM trans")
     fun getTrans() :List<Trans>
+
+    @Query(value =  "SELECT * FROM trans where id =:trans_id")
+    fun getTran(trans_id:Int) :List<Trans>
+
+    @Query(value =  "DELETE  FROM trans")
+    fun deleteAll()
 }
