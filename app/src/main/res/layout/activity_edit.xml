@@ -13,9 +13,20 @@
         android:layout_height="wrap_content"
         android:hint="Barcode"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/barcodeicon"
         app:layout_constraintTop_toTopOf="parent"
         android:inputType="number"
+        />
+    <ImageView
+        android:id="@+id/barcodeicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_barcodescan"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/edit_note"
+        app:layout_constraintEnd_toEndOf="@id/icon_min"
+
         />
     <EditText
         android:id="@+id/edit_note"

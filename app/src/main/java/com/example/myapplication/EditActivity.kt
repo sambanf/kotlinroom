@@ -1,15 +1,20 @@
 package com.example.myapplication
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.room.Trans
 import com.example.myapplication.room.TransDB
+import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.adapter_trans.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class EditActivity : AppCompatActivity() {
     val db by lazy { TransDB(this) }
@@ -45,6 +50,11 @@ class EditActivity : AppCompatActivity() {
                 finish()
             }
         }
+        barcodeicon.setOnClickListener{
+            val scanner = IntentIntegrator(this)
+
+            scanner.initiateScan()
+        }
     }
 
     fun setupView(){
@@ -75,6 +85,22 @@ class EditActivity : AppCompatActivity() {
             var tran = db.transDao().getTran(tranid)[0]
             edit_title.setText(tran.code)
             edit_note.setText((tran.qty.toString()))
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK){
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null) {
+                if (result.contents == null) {
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+                } else {
+                    edit_title.setText(result.contents.toString())
+                    Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 }
