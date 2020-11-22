@@ -15,6 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/text2"
+        android:textSize="15dp"
         />
     <TextView
         android:id="@+id/text2"
@@ -24,6 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/icon_edit"
+        android:textSize="15dp"
         />
     <ImageView
         android:id="@+id/icon_edit"

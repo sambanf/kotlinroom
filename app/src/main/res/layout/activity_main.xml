@@ -15,14 +15,18 @@
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/texttitle2"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="15dp"
+        android:textStyle="bold"/>
     <TextView
         android:id="@+id/texttitle2"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="@string/quantity"
         app:layout_constraintStart_toEndOf="@+id/texttitle"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="15dp"
+        android:textStyle="bold"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_note"
