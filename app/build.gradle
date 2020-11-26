@@ -48,6 +48,9 @@ dependencies {
     //Barcode Scanner
     implementation 'com.journeyapps:zxing-android-embedded:3.3.0'
 
+    //GSON
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 
     // Material Design
     def material_version = "1.2.1"

@@ -7,8 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +21,6 @@ import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.OutputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,15 +70,13 @@ class MainActivity : AppCompatActivity() {
         button_create.setOnClickListener{
             intentSwitch(0,0)
         }
-        val fileName = "hello.txt"
-        val fileData = "hello"
         button_export.setOnClickListener{
 
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
 
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_TITLE, "newfile.txt")
+            intent.putExtra(Intent.EXTRA_TITLE, "export.txt")
 
             startActivityForResult(intent, CREATE_REQUEST_CODE)
         }
@@ -163,8 +158,13 @@ class MainActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val trans = db.transDao().getTrans()
                 Log.d("MainAct", "dbrespose: $trans")
-                val textContent = trans.toString()
-                fileOutputStream.write(textContent.toByteArray())
+
+                for (tr in trans) {
+                    // Here your room is available
+                    var textContent = "${tr.code}, ${tr.qty}\n"
+                    fileOutputStream.write(textContent.toByteArray())
+                }
+
                 fileOutputStream.close()
                 pfd?.close()
             }
