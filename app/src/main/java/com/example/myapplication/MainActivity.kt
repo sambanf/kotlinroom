@@ -1,30 +1,35 @@
 package com.example.myapplication
 
-import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.room.Trans
 import com.example.myapplication.room.TransDB
-import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.adapter_trans.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+
 
 class MainActivity : AppCompatActivity() {
-    internal var myExternalFile: File?=null
+    private val CREATE_REQUEST_CODE = 40
+    private val OPEN_REQUEST_CODE = 41
+    private val SAVE_REQUEST_CODE = 42
     val db by lazy { TransDB(this) }
     lateinit var transAdapter: TransAdapter
 
@@ -71,16 +76,15 @@ class MainActivity : AppCompatActivity() {
         val fileName = "hello.txt"
         val fileData = "hello"
         button_export.setOnClickListener{
-                myExternalFile = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
-                try {
-                    val fileOutPutStream = FileOutputStream(myExternalFile)
-                    fileOutPutStream.write(fileData.toByteArray())
-                    fileOutPutStream.close()
-                } catch (e: Exception) {
-                    Log.d("MainAct", "error: ${e.message}")
-                }
-                Toast.makeText(applicationContext,"data save to $myExternalFile",Toast.LENGTH_SHORT).show()
-            }
+
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TITLE, "newfile.txt")
+
+            startActivityForResult(intent, CREATE_REQUEST_CODE)
+        }
 
         button_deleteall.setOnClickListener{
             CoroutineScope(Dispatchers.IO).launch {
@@ -102,10 +106,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onDelete(tran: Trans) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    db.transDao().deleteTrans(tran)
-                    loadData()
-                }
+               deleteDialog(tran)
             }
         })
         list_note.apply {
@@ -115,5 +116,63 @@ class MainActivity : AppCompatActivity() {
     }
     fun intentSwitch(tranid:Int, intentype:Int){
         startActivity(Intent(applicationContext,EditActivity::class.java).putExtra("intent_id", tranid).putExtra("intent_type", intentype))
+    }
+
+    private fun deleteDialog(trans: Trans){
+        val alertDialog = AlertDialog.Builder(this);
+        alertDialog.apply {
+            setTitle("Confirm Delete")
+            setMessage("${trans.code} with ${trans.qty} Quantity")
+            setNegativeButton("Cancel"){dialogInterface, i ->
+                dialogInterface.dismiss()
+            }
+            setPositiveButton("Delete"){dialogInterface, i ->
+                dialogInterface.dismiss()
+                CoroutineScope(Dispatchers.IO).launch {
+                    db.transDao().deleteTrans(trans)
+                    loadData()
+                }
+            }
+        }
+        alertDialog.show();
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int,
+                                         resultData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, resultData)
+        var currentUri: Uri? = null
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == CREATE_REQUEST_CODE) {
+                resultData?.let {
+                    currentUri = it.data
+                    writeFileContent(currentUri)
+                }
+            }
+        }
+    }
+    private fun writeFileContent(uri: Uri?) {
+        try {
+            val pfd = uri?.let { contentResolver.openFileDescriptor(it, "w") }
+
+            val fileOutputStream = FileOutputStream(
+                pfd?.fileDescriptor
+            )
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val trans = db.transDao().getTrans()
+                Log.d("MainAct", "dbrespose: $trans")
+                val textContent = trans.toString()
+                fileOutputStream.write(textContent.toByteArray())
+                fileOutputStream.close()
+                pfd?.close()
+            }
+
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }
